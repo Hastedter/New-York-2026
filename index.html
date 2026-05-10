@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>NYC Top 20 Abstimmung</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: auto; }
+    .free { background:#e9f7ef; }
+    .pass { background:#e8f1fc; }
+    .ticket { background:#fff6e0; }
+    label { display:block; padding:6px; margin:4px 0; cursor:pointer; }
+  </style>
+</head>
+<body>
+
+<h1>🗽 New York – Top 20 Abstimmung</h1>
+<p>Bitte wähle maximal <strong>20 Highlights</strong>.</p>
+
+<button onclick="togglePass()">nur New‑York‑Pass anzeigen</button>
+<p id="count">0 / 20 ausgewählt</p>
+
+<div id="options"></div>
+
+<h2>🏆 Dein TOP‑20‑Ranking</h2>
+<ol id="ranking"></ol>
+
+<script>
+const items = [
+  { name:"Empire State Building", type:"pass" },
+  { name:"Central Park", type:"free" },
+  { name:"Brooklyn Bridge", type:"free" },
+  { name:"Statue of Liberty", type:"pass" },
+  { name:"Times Square", type:"free" },
+  // … restliche Einträge
+];
+
+let selected = [];
+let passFilter = false;
+
+function render() {
+  const options = document.getElementById("options");
+  const ranking = document.getElementById("ranking");
+  options.innerHTML = "";
+  ranking.innerHTML = "";
+  document.getElementById("count").innerText =
+    selected.length + " / 20 ausgewählt";
+
+  items
+    .filter(i => !passFilter || i.type === "pass")
+    .forEach(i => {
+      const label = document.createElement("label");
+      label.className = i.type;
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = selected.includes(i.name);
+      cb.disabled = !cb.checked && selected.length >= 20;
+      cb.onchange = () => toggle(i.name);
+      label.append(cb, " ", i.name);
+      options.appendChild(label);
+    });
+
+  selected.forEach(s => {
+    const li = document.createElement("li");
+    li.textContent = s;
+    ranking.appendChild(li);
+  });
+}
+
+function toggle(name) {
+  if (selected.includes(name))
+    selected = selected.filter(x => x !== name);
+  else if (selected.length < 20)
+    selected.push(name);
+  render();
+}
+
+function togglePass() {
+  passFilter = !passFilter;
+  render();
+}
+
+render();
+</script>
+
+</body>
+</html>
