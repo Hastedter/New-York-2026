@@ -1,218 +1,152 @@
-
-<p>
-  Dein Name:
-  <input type="text" id="username" placeholder="Name eingeben">
-</p>
 <!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>NYC Top 20 – Abstimmung</title>
+<title>NYC Top 20 Abstimmung</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body {
-  font-family: Arial, sans-serif;
-  max-width: 950px;
+  font-family: Arial;
+  max-width: 1000px;
   margin: auto;
-  padding: 16px;
-  background: #fafafa;
-}
-h1, h2 {
-  margin-top: 1.2em;
+  padding: 15px;
 }
 label {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 8px;
-  margin-bottom: 6px;
+  gap: 8px;
+  padding: 6px;
+  margin: 4px 0;
   border-radius: 6px;
+  border: 1px solid #ccc;
   cursor: pointer;
-  border: 1px solid #ddd;
 }
-.free { background:#e9f7ef; border-color:#b6e2c6; }
-.pass { background:#e8f1fc; border-color:#b3cff6; }
-.ticket { background:#fff4db; border-color:#ffd37a; }
-
+.free { background:#e9f7ef; }
+.pass { background:#e8f1fc; }
+.ticket { background:#fff4db; }
 button {
+  margin-top: 10px;
   padding: 8px 12px;
-  margin: 8px 0;
   cursor: pointer;
-}
-#count {
-  font-weight: bold;
-  margin: 10px 0;
-}
-ol li {
-  margin-bottom: 6px;
-}
-.legend span {
-  padding: 4px 8px;
-  border-radius: 4px;
-  margin-right: 6px;
-  border: 1px solid;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🗽 New York City – Top‑20‑Abstimmung</h1>
+<h1>🗽 New York – TOP 20 Abstimmung</h1>
 
-<p>Bitte wähle maximal <strong>20 Sehenswürdigkeiten</strong>.</p>
+<p>
+  Dein Name:
+  <input type="text" id="username" placeholder="Name eingeben">
+</p>
 
-<div class="legend">
-  <span class="free">🟢 Kostenlos</span>
-  <span class="pass">🔵 New York Pass</span>
-  <span class="ticket">🟡 Extra Ticket</span>
-</div>
+<p>Maximal 20 auswählen</p>
 
-<button onclick="togglePass()">🔎 Nur New‑York‑Pass anzeigen</button>
+<button onclick="togglePass()">🔎 Nur New York Pass anzeigen</button>
 
 <p id="count">0 / 20 ausgewählt</p>
 
 <div id="options"></div>
 
-<h2>🏆 Dein TOP‑20‑Ranking</h2>
+<h2>🏆 Deine Auswahl</h2>
 <ol id="ranking"></ol>
 
+<button onclick="sendData()">📤 Ergebnis senden</button>
+<p id="status"></p>
+
 <script>
+
+// ✅ DEINE URL
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoJwV0GHwkApF87u0CCrrVuoUBY9cvD2h-ChUi9w87WGtGPGtHM8_6fkYCbxRCH8o_7A/exec";
+
+// ✅ LISTE
 const items = [
-  {name:"Empire State Building", type:"pass"},
-  {name:"Central Park", type:"free"},
-  {name:"Brooklyn Bridge", type:"free"},
-  {name:"Manhattan Skyline", type:"free"},
-  {name:"Ground Zero / 9‑11 Memorial", type:"free"},
-  {name:"Rockefeller Center / Top of the Rock", type:"pass"},
-  {name:"Times Square", type:"free"},
-  {name:"DUMBO (Brooklyn)", type:"free"},
-  {name:"Hard Rock Cafe New York", type:"free"},
-  {name:"Little Italy", type:"free"},
-  {name:"Chinatown", type:"free"},
-  {name:"Macy’s Herald Square", type:"free"},
-  {name:"Fifth Avenue", type:"free"},
-  {name:"Flatiron Building", type:"free"},
-  {name:"Wall Street & Charging Bull", type:"free"},
-  {name:"One World Trade Center (Observatory)", type:"pass"},
-  {name:"The Oculus", type:"free"},
-  {name:"Ghostbusters Headquarters", type:"free"},
-  {name:"Madison Square Park", type:"free"},
-  {name:"Statue of Liberty & Ellis Island", type:"pass"},
-  {name:"Roosevelt Island Tram", type:"free"},
-  {name:"Grand Central Terminal", type:"free"},
-  {name:"Dyker Heights Christmas Lights", type:"free"},
-  {name:"Hafenrundfahrt / Skyline Cruise", type:"pass"},
-  {name:"SUMMIT One Vanderbilt", type:"pass"},
-  {name:"Edge at Hudson Yards", type:"pass"},
-  {name:"High Line Park", type:"free"},
-  {name:"Bryant Park", type:"free"},
-  {name:"Staten Island Ferry", type:"free"},
-  {name:"Brooklyn Heights Promenade", type:"free"},
-  {name:"Metropolitan Museum of Art (The Met)", type:"pass"},
-  {name:"Museum of Modern Art (MoMA)", type:"pass"},
-  {name:"American Museum of Natural History", type:"pass"},
-  {name:"Guggenheim Museum", type:"pass"},
-  {name:"Intrepid Sea, Air & Space Museum", type:"pass"},
-  {name:"SoHo", type:"free"},
-  {name:"Harlem (Apollo Theater Umgebung)", type:"free"},
-  {name:"Chelsea Market", type:"free"},
-  {name:"Washington Square Park", type:"free"},
-  {name:"Battery Park", type:"free"},
-  {name:"Broadway District", type:"ticket"},
-  {name:"Radio City Music Hall", type:"ticket"},
-  {name:"Lincoln Center", type:"ticket"},
-  {name:"Brooklyn Botanic Garden", type:"ticket"},
-  {name:"Prospect Park", type:"free"},
-  {name:"Coney Island & Boardwalk", type:"free"},
-  {name:"New York Public Library", type:"free"},
-  {name:"St. Patrick’s Cathedral", type:"free"},
-  {name:"Governors Island", type:"free"},
-  {name:"Skyline bei Nacht", type:"free"}
+{ name:"Empire State Building", type:"pass"},
+{ name:"Central Park", type:"free"},
+{ name:"Brooklyn Bridge", type:"free"},
+{ name:"Times Square", type:"free"},
+{ name:"Statue of Liberty", type:"pass"},
+{ name:"Top of the Rock", type:"pass"},
+{ name:"DUMBO", type:"free"},
+{ name:"Wall Street", type:"free"},
+{ name:"One World Trade Center", type:"pass"},
+{ name:"Oculus", type:"free"},
+{ name:"Grand Central Terminal", type:"free"},
+{ name:"High Line Park", type:"free"},
+{ name:"Summit One Vanderbilt", type:"pass"},
+{ name:"Edge Hudson Yards", type:"pass"},
+{ name:"Hafenrundfahrt", type:"pass"},
+{ name:"MET Museum", type:"pass"},
+{ name:"MoMA", type:"pass"},
+{ name:"Natural History Museum", type:"pass"},
+{ name:"Staten Island Ferry", type:"free"},
+{ name:"5th Avenue", type:"free"},
+{ name:"Flatiron Building", type:"free"},
+{ name:"Little Italy", type:"free"},
+{ name:"Chinatown", type:"free"},
+{ name:"Bryant Park", type:"free"},
+{ name:"New York Public Library", type:"free"},
+{ name:"Hard Rock Cafe NYC", type:"free"},
+{ name:"Broadway District", type:"ticket"},
+{ name:"Radio City Music Hall", type:"ticket"},
+{ name:"Dyker Heights Christmas Lights", type:"free"},
+
+// NEU
+{ name:"9/11 Museum", type:"pass"},
+{ name:"American Dream Mall", type:"ticket"},
+{ name:"Unisphere (Queens)", type:"free"},
+{ name:"Gospel Harlem", type:"free"},
+{ name:"Yankee Stadium", type:"ticket"},
+{ name:"NFL / Football Spiel", type:"ticket"},
+{ name:"Little Italy Bronx", type:"free"},
+{ name:"Broadway Musical", type:"ticket"},
+{ name:"Stardust Diner", type:"free"},
+
+{ name:"Battery Park", type:"free"},
+{ name:"Washington Square Park", type:"free"},
+{ name:"SoHo", type:"free"},
+{ name:"Chelsea Market", type:"free"},
+{ name:"Roosevelt Island Tram", type:"free"},
+{ name:"Prospect Park", type:"free"},
+{ name:"Coney Island", type:"free"},
+{ name:"Guggenheim Museum", type:"pass"},
+{ name:"Intrepid Museum", type:"pass"},
+{ name:"Brooklyn Heights Promenade", type:"free"}
 ];
 
 let selected = [];
-let showPassOnly = false;
-
-function togglePass() {
-  showPassOnly = !showPassOnly;
-  render();
-}
-
-function toggle(name) {
-  if (selected.includes(name)) {
-    selected = selected.filter(x => x !== name);
-  } else if (selected.length < 20) {
-    selected.push(name);
-  }
-  render();
-}
+let passOnly = false;
 
 function render() {
-  const options = document.getElementById("options");
+  const opt = document.getElementById("options");
   const ranking = document.getElementById("ranking");
-  options.innerHTML = "";
+
+  opt.innerHTML = "";
   ranking.innerHTML = "";
 
   document.getElementById("count").innerText =
-    `${selected.length} / 20 ausgewählt`;
+    selected.length + " / 20 ausgewählt";
 
   items
-    .filter(i => !showPassOnly || i.type === "pass")
+    .filter(i => !passOnly || i.type === "pass")
     .forEach(i => {
-      const label = document.createElement("label");
+
+      let label = document.createElement("label");
       label.className = i.type;
 
-      const cb = document.createElement("input");
+      let cb = document.createElement("input");
       cb.type = "checkbox";
       cb.checked = selected.includes(i.name);
       cb.disabled = !cb.checked && selected.length >= 20;
+
       cb.onchange = () => toggle(i.name);
 
       label.appendChild(cb);
       label.append(" " + i.name);
-      options.appendChild(label);
+
+      opt.appendChild(label);
     });
 
   selected.forEach(s => {
-    const li = document.createElement("li");
-    li.textContent = s;
-    ranking.appendChild(li);
-  });
-}
-
-render();
-</script>
-
-</body>
-</html>
-
-<button onclick="sendData()">📤 Ergebnis senden</button>
-<p id="status"></p>
-function sendData() {
-  const name = document.getElementById("username").value;
-
-  if (!name) {
-    alert("Bitte Name eingeben");
-    return;
-  }
-
-  if (selected.length === 0) {
-    alert("Bitte mindestens eine Auswahl treffen");
-    return;
-  }
-
-  fetch("https://script.google.com/macros/s/AKfycbyoJwV0GHwkApF87u0CCrrVuoUBY9cvD2h-ChUi9w87WGtGPGtHM8_6fkYCbxRCH8o_7A/exec", {
-    method: "POST",
-    body: JSON.stringify({
-      name: name,
-      selection: selected
-    })
-  })
-    .then(() => {
-      document.getElementById("status").innerText = "✅ Gespeichert!";
-    })
-    .catch(() => {
-      document.getElementById("status").innerText = "❌ Fehler beim Senden";
-    });
-}
