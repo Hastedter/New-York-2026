@@ -179,13 +179,14 @@ function sendData() {
     return;
   }
 
+  let formData = new FormData();
+  formData.append("name", name);
+  formData.append("selection", selected.join(", "));
+
   fetch(SCRIPT_URL, {
     method: "POST",
-    mode: "no-cors",   // ✅ WICHTIG
-    body: JSON.stringify({
-      name: name,
-      selection: selected
-    })
+    mode: "no-cors",
+    body: formData
   });
 
   document.getElementById("status").innerText = "✅ Gesendet!";
