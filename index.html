@@ -13,10 +13,6 @@ body {
   padding: 20px;
 }
 
-h1 {
-  text-align: center;
-}
-
 label {
   display: block;
   padding: 6px;
@@ -38,7 +34,6 @@ button {
 
 #count {
   font-weight: bold;
-  margin-top: 10px;
 }
 </style>
 
@@ -46,7 +41,7 @@ button {
 
 <body>
 
-<h1>🗽 New York – Top 20 Abstimmung</h1>
+<h1>🗽 New York – TOP 20 Abstimmung</h1>
 
 <p>Dein Name:</p>
 <input type="text" id="username" placeholder="Name eingeben">
@@ -65,53 +60,58 @@ button {
 
 <script>
 
-// ✅ GOOGLE SCRIPT URL (DEINE)
+// ✅ DEINE GOOGLE SCRIPT URL
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoJwV0GHwkApF87u0CCrrVuoUBY9cvD2h-ChUi9w87WGtGPGtHM8_6fkYCbxRCH8o_7A/exec";
 
-// ✅ LISTE DER OPTIONEN
+// ✅ SEHENSWÜRDIGKEITEN
 const items = [
-{ name:"Empire State Building", type:"pass"},
-{ name:"Central Park", type:"free"},
-{ name:"Brooklyn Bridge", type:"free"},
-{ name:"Times Square", type:"free"},
-{ name:"Statue of Liberty", type:"pass"},
-{ name:"Top of the Rock", type:"pass"},
-{ name:"DUMBO", type:"free"},
-{ name:"Wall Street", type:"free"},
-{ name:"One World Trade Center", type:"pass"},
-{ name:"Oculus", type:"free"},
-{ name:"Grand Central Terminal", type:"free"},
-{ name:"High Line Park", type:"free"},
-{ name:"Summit One Vanderbilt", type:"pass"},
-{ name:"Edge Hudson Yards", type:"pass"},
-{ name:"Hafenrundfahrt", type:"pass"},
-{ name:"MET Museum", type:"pass"},
-{ name:"MoMA", type:"pass"},
-{ name:"Natural History Museum", type:"pass"},
-{ name:"Staten Island Ferry", type:"free"},
-{ name:"5th Avenue", type:"free"},
-{ name:"Flatiron Building", type:"free"},
-{ name:"Little Italy", type:"free"},
-{ name:"Chinatown", type:"free"},
-{ name:"Bryant Park", type:"free"},
-{ name:"New York Public Library", type:"free"},
-{ name:"Hard Rock Cafe NYC", type:"free"},
-{ name:"Broadway Musical", type:"ticket"},
-{ name:"Radio City Music Hall", type:"ticket"},
-{ name:"Dyker Heights Lights", type:"free"},
-{ name:"9/11 Museum", type:"pass"},
-{ name:"Gospel Harlem", type:"free"},
-{ name:"Yankee Stadium", type:"ticket"},
-{ name:"Chelsea Market", type:"free"},
-{ name:"SoHo", type:"free"},
-{ name:"Brooklyn Heights Promenade", type:"free"}
+{name:"Empire State Building", type:"pass"},
+{name:"Central Park", type:"free"},
+{name:"Brooklyn Bridge", type:"free"},
+{name:"Times Square", type:"free"},
+{name:"Statue of Liberty", type:"pass"},
+{name:"Top of the Rock", type:"pass"},
+{name:"DUMBO", type:"free"},
+{name:"Wall Street", type:"free"},
+{name:"One World Trade Center", type:"pass"},
+{name:"Oculus", type:"free"},
+{name:"Grand Central Terminal", type:"free"},
+{name:"High Line Park", type:"free"},
+{name:"Summit One Vanderbilt", type:"pass"},
+{name:"Edge Hudson Yards", type:"pass"},
+{name:"Hafenrundfahrt", type:"pass"},
+{name:"MET Museum", type:"pass"},
+{name:"MoMA", type:"pass"},
+{name:"Natural History Museum", type:"pass"},
+{name:"Staten Island Ferry", type:"free"},
+{name:"5th Avenue", type:"free"},
+{name:"Flatiron Building", type:"free"},
+{name:"Little Italy", type:"free"},
+{name:"Chinatown", type:"free"},
+{name:"Bryant Park", type:"free"},
+{name:"New York Public Library", type:"free"},
+{name:"Hard Rock Cafe NYC", type:"free"},
+{name:"Broadway Musical", type:"ticket"},
+{name:"Radio City Music Hall", type:"ticket"},
+{name:"Dyker Heights Lights", type:"free"},
+{name:"9/11 Museum", type:"pass"},
+{name:"Gospel Harlem", type:"free"},
+{name:"Yankee Stadium", type:"ticket"},
+{name:"Chelsea Market", type:"free"},
+{name:"SoHo", type:"free"},
+{name:"Brooklyn Heights Promenade", type:"free"},
+
+// ✅ NEU HINZUGEFÜGT
+{name:"Brooklyn allgemein", type:"free"},
+{name:"Bronx allgemein", type:"free"}
+
 ];
 
 // ✅ STATE
 let selected = [];
 let passOnly = false;
 
-// ✅ RENDER FUNCTION
+// ✅ RENDER
 function render() {
   const optionsDiv = document.getElementById("options");
   const ranking = document.getElementById("ranking");
@@ -123,37 +123,36 @@ function render() {
     selected.length + " / 20 ausgewählt";
 
   items
-    .filter(item => !passOnly || item.type === "pass")
-    .forEach(item => {
+    .filter(i => !passOnly || i.type === "pass")
+    .forEach(i => {
 
       let label = document.createElement("label");
-      label.className = item.type;
+      label.className = i.type;
 
-      let checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.checked = selected.includes(item.name);
+      let cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = selected.includes(i.name);
+      cb.disabled = !cb.checked && selected.length >= 20;
 
-      checkbox.disabled = !checkbox.checked && selected.length >= 20;
+      cb.onchange = () => toggle(i.name);
 
-      checkbox.onchange = () => toggle(item.name);
-
-      label.appendChild(checkbox);
-      label.append(" " + item.name);
+      label.appendChild(cb);
+      label.append(" " + i.name);
 
       optionsDiv.appendChild(label);
     });
 
-  selected.forEach(sel => {
+  selected.forEach(s => {
     let li = document.createElement("li");
-    li.textContent = sel;
+    li.textContent = s;
     ranking.appendChild(li);
   });
 }
 
-// ✅ TOGGLE SELECTION
+// ✅ TOGGLE
 function toggle(name) {
   if (selected.includes(name)) {
-    selected = selected.filter(item => item !== name);
+    selected = selected.filter(x => x !== name);
   } else if (selected.length < 20) {
     selected.push(name);
   }
@@ -166,7 +165,7 @@ function togglePass() {
   render();
 }
 
-// ✅ SEND DATA
+// ✅ SENDEN (FIXED VERSION)
 function sendData() {
   let name = document.getElementById("username").value;
 
@@ -182,24 +181,20 @@ function sendData() {
 
   fetch(SCRIPT_URL, {
     method: "POST",
+    mode: "no-cors",   // ✅ WICHTIG
     body: JSON.stringify({
       name: name,
       selection: selected
     })
-  })
-  .then(() => {
-    document.getElementById("status").innerText = "✅ Erfolgreich gespeichert!";
-  })
-  .catch(() => {
-    document.getElementById("status").innerText = "❌ Fehler beim Speichern";
   });
+
+  document.getElementById("status").innerText = "✅ Gesendet!";
 }
 
-// ✅ INITIAL LOAD
+// ✅ START
 render();
 
 </script>
 
 </body>
 </html>
-``
